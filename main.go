@@ -3,30 +3,31 @@ package main
 import (
 	"encoding/json"
 	"fmt"
-	"log"
-	"net/http"
-
 	"github.com/gorilla/mux"
+	"log"
+	"math/rand"
+	"net/http"
+	"strconv"
 )
 
-type Tasks struct {
+type Task struct {
 	ID         string `json:"id"`
 	TaskName   string `json:"taskName"`
 	TaskDetail string `json:"taskDetail"`
 	Date       string `json:"date"`
 }
 
-var tasks []Tasks
+var tasks []Task
 
 func allTasks() {
-	task := Tasks{
+	task := Task{
 		ID:         "1",
 		TaskName:   "New projects",
 		TaskDetail: "You must lead the project and finish it",
 		Date:       "2022-01-22",
 	}
 	tasks = append(tasks, task)
-	task1 := Tasks{
+	task1 := Task{
 		ID:         "2",
 		TaskName:   "Power project",
 		TaskDetail: "We need to hire more staffs before the deadline",
@@ -57,8 +58,14 @@ func task(w http.ResponseWriter, r *http.Request) {
 	json.NewEncoder(w).Encode(map[string]string{"status": "Error"})
 }
 func createTask(w http.ResponseWriter, r *http.Request) {
-	fmt.Println("I am at the home page")
+	w.Header().Set("Content-Type", "application/json")
+	var task Task
+	_ = json.NewDecoder(r.Body).Decode(&task)
+	task.ID = strconv.Itoa(rand.Intn(1000))
+	tasks = append(tasks, task)
+	json.NewEncoder(w).Encode(task)
 }
+
 func deleteTask(w http.ResponseWriter, r *http.Request) {
 	fmt.Println("I am at the home page")
 }
@@ -75,7 +82,7 @@ func handleRoutes() {
 	router.HandleFunc("/delete/{id}", deleteTask).Methods("DELETE")
 	router.HandleFunc("/update/{id}", updateTask).Methods("PUT")
 
-	log.Fatal(http.ListenAndServe(":8080", router))
+	log.Fatal(http.ListenAndServe("192.170.120.61:8082", router))
 }
 
 func main() {
