@@ -8,6 +8,7 @@ import (
 	"math/rand"
 	"net/http"
 	"strconv"
+	"time"
 )
 
 type Task struct {
@@ -62,8 +63,9 @@ func createTask(w http.ResponseWriter, r *http.Request) {
 	var task Task
 	_ = json.NewDecoder(r.Body).Decode(&task)
 	task.ID = strconv.Itoa(rand.Intn(1000))
+	task.Date = time.Now().Format("2006-01-02")
 	tasks = append(tasks, task)
-	json.NewEncoder(w).Encode(task)
+	json.NewEncoder(w).Encode(tasks)
 }
 
 func deleteTask(w http.ResponseWriter, r *http.Request) {
