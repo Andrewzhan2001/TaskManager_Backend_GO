@@ -72,7 +72,24 @@ func deleteTask(w http.ResponseWriter, r *http.Request) {
 	fmt.Println("I am at the home page")
 }
 func updateTask(w http.ResponseWriter, r *http.Request) {
-	fmt.Println("I am at the home page")
+	params := mux.Vars(r)
+	check := false
+	for i, item := range tasks {
+		if item.ID == params["id"] {
+			tasks = append(tasks[:i], tasks[i+1:]...)
+			var task Task
+			_ = json.NewDecoder(r.Body).Decode(&task)
+			task.ID = params["id"]
+			task.Date = time.Now().Format("2006-01-02")
+			tasks = append(tasks, task)
+			check = true
+			json.NewEncoder(w).Encode(tasks)
+			return
+		}
+	}
+	if !check {
+		json.NewEncoder(w).Encode(map[string]string{"status": "Error in updating task"})
+	}
 }
 
 func handleRoutes() {
