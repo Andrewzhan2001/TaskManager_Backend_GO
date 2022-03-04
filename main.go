@@ -117,7 +117,7 @@ func handleRoutes() {
 
 func main() {
 	allTasks()
-	fmt.Println("Hello Fulutter boys")
+	fmt.Println("Hello Flutter boys")
 	handleRoutes()
 
 }
